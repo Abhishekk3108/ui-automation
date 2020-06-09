@@ -1,31 +1,30 @@
 package optimusShoppingCartPages;
 
-import browserSetUp.BrowserInitialization;
+import baseSetUp.BrowserSetUp;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.testng.Assert;
 import org.testng.Reporter;
-import seleniumUtils.SeleniumUtil;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static seleniumUtils.SeleniumUtil.*;
 
-public class SearchResultsPage  extends BrowserInitialization
+public class SearchResultsPage  extends BrowserSetUp
 {
 
 	@FindBy(xpath = "//a[@class = 'full-width-link']")
-	public List<WebElement> searchResults;
+	public List<WebElement> searchResultsList;
 
 
 	@FindBy(xpath = "(//span[@class = 'price-item price-item--regular'])[1]")
 	public WebElement productPrice;
 
 
-	public SearchResultsPage()
+	public SearchResultsPage(WebDriver driver)
 	{
+		this.driver= driver;
 		PageFactory.initElements(driver,this);
 	}
 
@@ -34,18 +33,18 @@ public class SearchResultsPage  extends BrowserInitialization
 		return driver.getTitle();
 	}
 
-	public void setProductPrice()
+	public void getProductPrice()
 	{
 		String price = seleniumGetText(productPrice);
 	}
 
+
 	public void openProudctDetailsPage()
 	{
-		if(searchResults.size()!=0)
+		if(searchResultsList.size()!=0)
 		{ Reporter.log("Search results are displayed", true);
-			Reporter.log(searchResults.get(0)+" Clicking on product links page",true);
-			SeleniumUtil.seleniumClick(searchResults.get(0));
-		driver.manage().timeouts().implicitlyWait(5000, TimeUnit.MILLISECONDS);}
+			Reporter.log("Clicking on "+seleniumGetText(searchResultsList.get(0))+" product links page",true);
+			seleniumClick(searchResultsList.get(0)); }
 		else { Reporter.log("Search results are not displayed",true); }
 
 	}

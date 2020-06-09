@@ -1,38 +1,51 @@
 package optimusShoppingCartPages;
 
-import browserSetUp.BrowserInitialization;
+import baseSetUp.BrowserSetUp;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.testng.Assert;
 import org.testng.Reporter;
-import seleniumUtils.SeleniumUtil;
+
+import java.util.List;
 
 import static seleniumUtils.SeleniumUtil.*;
 
-public class OptimusHomePage extends BrowserInitialization
+public class OptimusHomePage extends BrowserSetUp
 {
+	@FindBy(xpath = "//a[@class ='site-header__logo-link']")
+	public WebElement homePageTitle;
+
 	@FindBy(xpath = "//span[text()= 'Search']/..")
 	public WebElement searchIcon;
 
 	@FindBy(name = "q")
 	public WebElement searchTextBox;
 
-	public OptimusHomePage()
-	{
-		PageFactory.initElements(driver,this);
-	}
+	@FindBy(xpath = "//ul[@class = 'grid grid--uniform grid--view-items']/li")
+    public List<WebElement> featuredItemsCollectionList;
 
+	@FindBy(xpath = "//div[text() = 'RoundNeck Shirt 14']")
+	public WebElement featureItemName;
 
-	public String homePageTitle()
+	public OptimusHomePage(WebDriver driver) {
+		this.driver = driver;
+		PageFactory.initElements(driver,this); }
+
+	public String getHomePageheader()
 	{
-		return driver.getTitle();
+		String pageTitle = "";
+		waitForElementVisiblity(driver,homePageTitle,5);
+		if(isElementDisplayed(homePageTitle)) {
+		pageTitle = seleniumGetText(homePageTitle); }
+	    else { Reporter.log("Displaying Optimus home page",true); }
+	    return pageTitle;
 	}
 
 	public void clickOnSearchIcon()
 	{
 		if(isElementDisplayed(searchIcon)) {
-			Reporter.log("User is on Optimus homepage",true);
+			Reporter.log("Going TO click on the search icon on home page",true);
 			seleniumClick(searchIcon);}
 		else { Reporter.log(searchIcon+ "Element is not visible ",true); }
 	}
@@ -44,6 +57,25 @@ public class OptimusHomePage extends BrowserInitialization
 			seleniumEnterText(searchTextBox,product);
 		Reporter.log("Submitted for search" + product);}
 		else{ Reporter.log(searchTextBox+ "Element is not visible ",true); }
+	}
+
+	public void clickFeaturedItemlink()
+	{
+		if(featuredItemsCollectionList.size()!=0){Reporter.log("Featured item list is displayed", true);
+			Reporter.log(seleniumGetText(featureItemName)+" Clicking on product links page",true);
+			seleniumClick(featuredItemsCollectionList.get(0));}
+		else{ Reporter.log(featuredItemsCollectionList +"No such element is displayed",true);}
+	}
+
+	public String getFeaturedItemName()
+	{
+		String itemName= "";
+		if(isElementDisplayed(featureItemName))
+		{ Reporter.log(seleniumGetText(featureItemName)+" link is displayed",true);
+		   itemName = seleniumGetText(featureItemName);
+		}
+		else{Reporter.log(featureItemName+"No such element is displayed",true);}
+		return itemName;
 	}
 
 }
